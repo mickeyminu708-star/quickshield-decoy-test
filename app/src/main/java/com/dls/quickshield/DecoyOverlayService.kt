@@ -24,7 +24,6 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
-import com.dls.quickshield.R
 
 class DecoyOverlayService : Service() {
 
@@ -52,17 +51,19 @@ class DecoyOverlayService : Service() {
             manager.createNotificationChannel(channel)
         }
 
+        val smallIconRes = android.R.drawable.ic_lock_idle_lock
+
         val notification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Notification.Builder(this, channelId)
                 .setContentTitle("QuickShield Active")
-                .setContentText("Shield button par tap/double-tap karke decoy kholein")
-                .setSmallIcon(R.drawable.ic_launcher_decoy)
+                .setContentText("QS button par tap/double-tap karke decoy kholein")
+                .setSmallIcon(smallIconRes)
                 .build()
         } else {
             @Suppress("DEPRECATION")
             Notification.Builder(this)
                 .setContentTitle("QuickShield Active")
-                .setSmallIcon(R.drawable.ic_launcher_decoy)
+                .setSmallIcon(smallIconRes)
                 .build()
         }
 
@@ -187,10 +188,10 @@ class DecoyOverlayService : Service() {
         if (isDecoyActive) return
 
         val prefs = getSharedPreferences("quickshield_prefs", Context.MODE_PRIVATE)
-        val mode = prefs.getString("decoy_mode", "image") ?: "image"
+        val mode = prefs.getString("decoy_mode", "text") ?: "text"
         val boringText = prefs.getString(
             "decoy_text",
-            "Notes: Quarterly Tax & Inventory Compliance Guidelines..."
+            "THE DAILY CHRONICLE\n\nLATEST UPDATES\nQuarterly Tax & Inventory Compliance Guidelines..."
         ) ?: ""
         val imageUriString = prefs.getString("decoy_image_uri", null)
 
@@ -203,7 +204,7 @@ class DecoyOverlayService : Service() {
                 return super.dispatchKeyEvent(event)
             }
         }.apply {
-            setBackgroundColor(Color.BLACK)
+            setBackgroundColor(Color.WHITE)
             isFocusableInTouchMode = true
             requestFocus()
         }
@@ -214,8 +215,52 @@ class DecoyOverlayService : Service() {
             null
         }
 
-        if (mode == "text" && customBitmap == null) {
-            container.setBackgroundColor(Color.WHITE)
+        if (customBitmap != null) {
+            container.setBackgroundColor(Color.BLACK)
+            val imageView = ImageView(this).apply {
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                setImageBitmap(customBitmap)
+            }
+            container.addView(
+                imageView,
+                FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                )
+            )
+        } else if (mode == "image") {
+            val resId = resources.getIdentifier("launcher_decoy", "drawable", packageName)
+            if (resId != 0) {
+                container.setBackgroundColor(Color.BLACK)
+                val imageView = ImageView(this).apply {
+                    scaleType = ImageView.ScaleType.FIT_CENTER
+                    setImageResource(resId)
+                }
+                container.addView(
+                    imageView,
+                    FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                    )
+                )
+            } else {
+                val scrollView = ScrollView(this)
+                val textView = TextView(this).apply {
+                    text = boringText
+                    textSize = 16f
+                    setTextColor(Color.DKGRAY)
+                    setPadding(48, 80, 48, 80)
+                }
+                scrollView.addView(textView)
+                container.addView(
+                    scrollView,
+                    FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                    )
+                )
+            }
+        } else {
             val scrollView = ScrollView(this)
             val textView = TextView(this).apply {
                 text = boringText
@@ -226,22 +271,6 @@ class DecoyOverlayService : Service() {
             scrollView.addView(textView)
             container.addView(
                 scrollView,
-                FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
-                )
-            )
-        } else {
-            val imageView = ImageView(this).apply {
-                scaleType = ImageView.ScaleType.FIT_CENTER
-                if (customBitmap != null) {
-                    setImageBitmap(customBitmap)
-                } else {
-                    setImageResource(R.drawable.launcher_decoy)
-                }
-            }
-            container.addView(
-                imageView,
                 FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.MATCH_PARENT
