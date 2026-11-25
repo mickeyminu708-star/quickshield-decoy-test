@@ -7,7 +7,9 @@
 
     <application
         android:allowBackup="true"
+        android:icon="@drawable/ic_launcher_decoy"
         android:label="QuickShield Decoy"
+        android:roundIcon="@drawable/ic_launcher_decoy"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">
 
