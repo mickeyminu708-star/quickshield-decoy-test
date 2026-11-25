@@ -24,6 +24,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
+import com.dls.quickshield.R
 
 class DecoyOverlayService : Service() {
 
