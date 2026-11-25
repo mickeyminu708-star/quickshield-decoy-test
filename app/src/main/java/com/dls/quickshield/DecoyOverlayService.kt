@@ -85,19 +85,21 @@ class DecoyOverlayService : Service() {
         val density = resources.displayMetrics.density
         val sizePx = (52 * density).toInt()
 
+        // Dull/subtle bubble background & border
         val bubbleBg = GradientDrawable().apply {
             shape = GradientDrawable.OVAL
-            setColor(Color.argb(215, 15, 23, 42))
-            setStroke((2 * density).toInt(), Color.argb(230, 56, 189, 248))
+            setColor(Color.argb(55, 30, 30, 30))
+            setStroke((1 * density).toInt(), Color.argb(45, 160, 160, 160))
         }
 
+        // Dull/subtle "QS" text
         val bubble = TextView(this).apply {
             text = "QS"
-            textSize = 14f
-            setTextColor(Color.WHITE)
+            textSize = 12f
+            setTextColor(Color.argb(115, 200, 200, 200))
             gravity = Gravity.CENTER
             background = bubbleBg
-            elevation = 8f
+            elevation = 2f
         }
 
         val params = WindowManager.LayoutParams(
@@ -280,15 +282,18 @@ class DecoyOverlayService : Service() {
 
         val density = resources.displayMetrics.density
         val closeSize = (48 * density).toInt()
+
+        // Dull/subtle close button background
         val closeBg = GradientDrawable().apply {
             shape = GradientDrawable.OVAL
-            setColor(Color.argb(190, 20, 20, 20))
+            setColor(Color.argb(40, 30, 30, 30))
         }
 
+        // Dull/subtle "×" close symbol
         val closeBtn = TextView(this).apply {
             text = "×"
-            textSize = 24f
-            setTextColor(Color.WHITE)
+            textSize = 18f
+            setTextColor(Color.argb(110, 200, 200, 200))
             gravity = Gravity.CENTER
             background = closeBg
             setOnClickListener {
